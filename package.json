@@ -7,7 +7,7 @@
     "tsc": "tsc",
     "test": "jest",
     "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
-    "test:ci": "jest --ci --runInBand --reporters=default --reporters=jest-junit"
+    "test:ci": "jest --ci --runInBand --reporters=default --reporters=jest-juniti --collectCoverage=true"
   },
   "author": "Kristian Bortnik",
   "license": "MIT",
