@@ -6,7 +6,8 @@
   "scripts": {
     "tsc": "tsc",
     "test": "jest",
-    "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix"
+    "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
+    "test:ci": "jest --ci --runInBand --reporters=default --reporters=jest-junit"
   },
   "author": "Kristian Bortnik",
   "license": "MIT",
