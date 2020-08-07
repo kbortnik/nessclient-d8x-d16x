@@ -1,0 +1,34 @@
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: circleci/node
+    steps:
+      - checkout
+      - restore_cache:
+          name: Restore yarn package cache
+          keys:
+            - yarn-packages-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install dependencies
+          command: yarn install --immutable
+      - save_cache:
+          name: Save yarn package cache
+          key: yarn-packages-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+      - run:
+          name: Build
+          command: yarn tsc
+      - run:
+          name: Install JUnit coverage reporter
+          command: yarn add --dev jest-junit
+      - run:
+          name: Run tests with JUnit as reporter
+          command: yarn test:ci
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
+      - store_test_results:
+          path: ./reports/junit/
+      - store_artifacts:
+          path: ./reports/junit

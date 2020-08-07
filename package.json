@@ -6,7 +6,8 @@
   "scripts": {
     "tsc": "tsc",
     "test": "jest",
-    "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix"
+    "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
+    "test:ci": "jest --ci --runInBand --reporters=default --reporters=jest-junit && codecov"
   },
   "author": "Kristian Bortnik",
   "license": "MIT",
@@ -24,6 +25,7 @@
     "@typescript-eslint/eslint-plugin": "^3.7.0",
     "@typescript-eslint/parser": "^3.7.0",
     "babel-jest": "^26.2.2",
+    "codecov": "^3.7.2",
     "eslint": "^7.5.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-config-standard": "^14.1.1",
