@@ -1,4 +1,4 @@
-# ness-d8x-d16x
+# nessclient-d8x-d16x
 [![CircleCI](https://circleci.com/gh/kbortnik/nessclient-d8x-d16x/tree/master.svg?style=shield)](https://circleci.com/gh/kbortnik/nessclient-d8x-d16x/tree/master)
  [![codecov](https://codecov.io/gh/kbortnik/nessclient-d8x-d16x/branch/master/graph/badge.svg)](https://codecov.io/gh/kbortnik/nessclient-d8x-d16x)
 
