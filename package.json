@@ -2,6 +2,11 @@
   "name": "nessclient-d8x-d16x",
   "version": "1.0.0",
   "description": "Library for interfacing with Ness D8x and D16x alarm systems, via an RS232 network server.",
+  "keywords": ["ness", "d8", "d16", "d8x", "d16x"],
+  "bugs": {"url": "https://github.com/kbortnik/nessclient-d8x-d16x/issues"},
+  "author": "Kristian Bortnik",
+  "license": "MIT",
+  "repository": "github:kbortnik/nessclient-d8x-d16x",
   "main": "build/client.js",
   "scripts": {
     "tsc": "tsc",
@@ -9,8 +14,6 @@
     "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
     "test:ci": "jest --ci --runInBand --reporters=default --reporters=jest-junit && codecov"
   },
-  "author": "Kristian Bortnik",
-  "license": "MIT",
   "dependencies": {
     "@types/struct": "0.0.0",
     "struct": "0.0.12",
