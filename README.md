@@ -7,5 +7,8 @@ The library is based on [@nickw444](https://github.com/nickw444)'s [Python imple
 
 ## Installation
 ```sh
-npm install nessclient-d8x-d16x --save
+# yarn
+yarn add nessclient
+# npm
+npm install nessclient --save
 ```
