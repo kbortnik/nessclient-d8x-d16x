@@ -1,13 +1,24 @@
 {
   "name": "nessclient",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "Library for interfacing with Ness D8x and D16x alarm systems, via an RS232 network server.",
-  "keywords": ["ness", "d8", "d16", "d8x", "d16x"],
-  "bugs": {"url": "https://github.com/kbortnik/nessclient-d8x-d16x/issues"},
+  "keywords": [
+    "ness",
+    "d8",
+    "d16",
+    "d8x",
+    "d16x"
+  ],
+  "bugs": {
+    "url": "https://github.com/kbortnik/nessclient-d8x-d16x/issues"
+  },
   "author": "Kristian Bortnik",
   "license": "MIT",
   "repository": "github:kbortnik/nessclient-d8x-d16x",
   "main": "build/client.js",
+  "files": [
+    "build"
+  ],
   "scripts": {
     "tsc": "tsc",
     "test": "jest",
@@ -16,8 +27,7 @@
   },
   "dependencies": {
     "@types/struct": "0.0.0",
-    "struct": "0.0.12",
-    "typescript": "^3.9.7"
+    "struct": "0.0.12"
   },
   "devDependencies": {
     "@babel/core": "^7.11.0",
@@ -40,7 +50,8 @@
     "husky": "^4.2.5",
     "jest": "^26.2.2",
     "lint-staged": ">=10",
-    "prettier": "^2.0.5"
+    "prettier": "^2.0.5",
+    "typescript": "^3.9.7"
   },
   "husky": {
     "hooks": {
