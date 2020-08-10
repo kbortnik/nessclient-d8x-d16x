@@ -43,7 +43,8 @@ class NessClient {
       let event: BaseEvent;
 
       try {
-        packet = Packet.decode(data.toString('utf8').trim());
+        const decodedData = data.toString('utf8').trim();
+        packet = Packet.decode(decodedData);
         this._verbose && console.log('%s', packet);
 
         event = BaseEvent.decode(packet);

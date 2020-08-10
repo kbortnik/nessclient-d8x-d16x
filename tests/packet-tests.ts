@@ -11,11 +11,12 @@ test('decode encode', () => {
   }
 });
 
+test('decode zone update', () => {
+  Packet.decode('8200036000020019');
+});
+
 test('system status packet decode', () => {
-  // Skip checksum validation, as we can't
-  // guarantee that the packet data
-  // is genuine
-  const packet = Packet.decode('8700036100070018092118370974', true);
+  const packet = Packet.decode('8700036100070018092118370974');
   expect(packet.start).toBe(0x87);
   expect(packet.address).toBe(0x00);
   expect(packet.seq).toBe(0x00);
@@ -26,10 +27,7 @@ test('system status packet decode', () => {
 });
 
 test('decode with address and timestamp', () => {
-  // Skip checksum validation, as we can't
-  // guarantee that the packet data
-  // is genuine
-  const packet = Packet.decode('8709036101050018122709413536', true);
+  const packet = Packet.decode('8709036101050018122709413536');
   expect(packet.address).toBe(0x09);
   expect(packet.seq).toBe(0x00);
   expect(packet.length).toBe(3);
@@ -64,14 +62,10 @@ test('decode status update response', () => {
   expect(packet.command).toBe(CommandType.USER_INTERFACE);
   expect(packet.data).toBe('070000');
   expect(packet.timestamp).toBeNull();
-  //expect(packet.checksum).toBe(?);
 });
 
 test('bad timestamp', () => {
-  // Skip checksum validation, as we can't
-  // guarantee that the packet data
-  // is genuine
-  const packet = Packet.decode('8700036100070019022517600057', true);
+  const packet = Packet.decode('8700036100070019022517600057');
   expect(packet.start).toBe(0x87);
   expect(packet.address).toBe(0x00);
   expect(packet.length).toBe(3);

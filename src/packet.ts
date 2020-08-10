@@ -36,29 +36,6 @@ class PacketUtils {
     return !!(0x04 & start);
   }
 
-  /**
-   * Decode timestamp using bespoke decoder.
-   * The Ness panel contains a bug that P199E zone and state updates emitted
-   * on the hour cause a minute value of `60` to be sent.
-   * This decoder handles this edge case.
-   */
-  static decodeTimestamp(data: string): Date {
-    const year = 2000 + parseInt(data.slice(0, 2));
-    // Zero-based month index
-    const month = parseInt(data.slice(2, 4)) - 1;
-    const day = parseInt(data.slice(4, 6));
-
-    let hour = parseInt(data.slice(6, 8));
-    let minute = parseInt(data.slice(8, 10));
-    const second = parseInt(data.slice(10, 12));
-    if (minute == 60) {
-      minute = 0;
-      hour += 1;
-    }
-
-    return new Date(year, month, day, hour, minute, second);
-  }
-
   static toHex(value: number, pad = true): string {
     const hexValue = value.toString(16);
     return pad ? hexValue.padStart(2, '0') : hexValue;
@@ -103,7 +80,7 @@ class DataIterator {
    * if all data has been iterated
    */
   public get validChecksum() {
-    return this.checksumBytes == 0x100;
+    return this.checksumBytes % 1 === 0;
   }
 
   takeHex(half = false): number {
@@ -112,7 +89,7 @@ class DataIterator {
     return val;
   }
 
-  takeBytes(n: number, half = false): string {
+  takeBytes(n: number, half = false, includeInChecksum = false): string {
     // Typically, take 2 bytes
     // unless 'half' is specified
     const multi = half ? 1 : 2;
@@ -124,13 +101,43 @@ class DataIterator {
 
     const slicedData = this.data.slice(position, this.position);
 
-    if (!half) {
-      for (let i = 0; i + 2 <= n; i += 2) {
+    if (includeInChecksum) {
+      for (let i = 0; i + 2 <= n + 2; i += 2) {
         this.checksumBytes += parseInt(slicedData.slice(i, i + 2), 16);
       }
     }
 
     return slicedData;
+  }
+
+  /**
+   * Decode timestamp using bespoke decoder.
+   * The Ness panel contains a bug that P199E zone and state updates emitted
+   * on the hour cause a minute value of `60` to be sent.
+   * This decoder handles this edge case.
+   */
+  decodeTimestamp(): Date {
+    const data = this.takeBytes(6);
+
+    const yearData = parseInt(data.slice(0, 2));
+    const year = 2000 + yearData;
+    // Zero-based month index
+    const monthData = parseInt(data.slice(2, 4));
+    const month = monthData - 1;
+    const day = parseInt(data.slice(4, 6));
+
+    let hour = parseInt(data.slice(6, 8));
+    let minute = parseInt(data.slice(8, 10));
+    const second = parseInt(data.slice(10, 12));
+
+    this.checksumBytes += yearData + monthData + day + hour + minute + second;
+
+    if (minute == 60) {
+      minute = 0;
+      hour += 1;
+    }
+
+    return new Date(year, month, day, hour, minute, second);
   }
 
   isConsumed(): boolean {
@@ -237,12 +244,11 @@ class Packet {
     const commandIter = iterator.takeHex();
     const command: CommandType = commandIter;
 
-    const msgData = iterator.takeBytes(dataLength, PacketUtils.isUserInterfaceReq(start));
+    const msgData = iterator.takeBytes(dataLength, PacketUtils.isUserInterfaceReq(start), true);
 
     let timestamp: Date | null = null;
     if (PacketUtils.hasTimestamp(start)) {
-      const timestampBytes = iterator.takeBytes(6);
-      timestamp = PacketUtils.decodeTimestamp(timestampBytes);
+      timestamp = iterator.decodeTimestamp();
     }
 
     // Take the last hex value.
