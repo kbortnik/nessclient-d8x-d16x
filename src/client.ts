@@ -3,21 +3,23 @@ import { Handler, EventDispatcher } from './event-handling';
 import { Packet, CommandType } from './packet';
 import { BaseEvent } from './event';
 import { Alarm, ArmingState } from './alarm';
+import { Logger, InternalLogger } from './logging';
 
 class NessClient {
   public host: string;
   public port: number;
 
   private readonly _connection: Connection;
-  private readonly _verbose: boolean;
   private _alarm: Alarm;
   private _statusLoop: NodeJS.Timeout | undefined;
   private _eventReceivedEventDispatcher = new EventDispatcher<BaseEvent>();
 
-  constructor(host: string, port = 23, verbose = false) {
+  private _logger: InternalLogger;
+
+  constructor(host: string, port = 23, logger: Logger | null = null) {
     this.host = host;
     this.port = port;
-    this._verbose = verbose;
+    this._logger = new InternalLogger(logger);
 
     this._connection = new Connection(host, port);
     this._alarm = new Alarm(true);
@@ -45,12 +47,12 @@ class NessClient {
       try {
         const decodedData = data.toString('utf8').trim();
         packet = Packet.decode(decodedData);
-        this._verbose && console.log('%s', packet);
+        this._logger.debug('%s', packet);
 
         event = BaseEvent.decode(packet);
-        this._verbose && console.log('%s', event);
+        this._logger.debug('%s', event);
       } catch (error) {
-        this._verbose && console.log('Error decoding packet. ', error);
+        this._logger.error('Error decoding packet: %s', error);
         return;
       }
 
