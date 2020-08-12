@@ -1,34 +1,83 @@
 version: 2.1
+
+defaults: &defaults
+  working_directory: ~/repo
+  docker:
+    - image: circleci/node
+
 jobs:
-  build:
-    docker:
-      - image: circleci/node
+  test:
+    <<: *defaults
     steps:
       - checkout
+
       - restore_cache:
           name: Restore yarn package cache
           keys:
             - yarn-packages-{{ checksum "yarn.lock" }}
+        
       - run:
           name: Install dependencies
           command: yarn install --immutable
+
       - save_cache:
           name: Save yarn package cache
           key: yarn-packages-{{ checksum "yarn.lock" }}
           paths:
             - ~/.cache/yarn
+
       - run:
           name: Build
           command: yarn tsc
+
       - run:
           name: Install JUnit coverage reporter
           command: yarn add --dev jest-junit
+
       - run:
           name: Run tests with JUnit as reporter
           command: yarn test:ci
           environment:
             JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
+
       - store_test_results:
           path: ./reports/junit/
+
       - store_artifacts:
           path: ./reports/junit
+
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
+          
+  deploy:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+
+      - run:
+          name: Login to npm
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
+
+      - run:
+          name: Publish package
+          command: yarn publish --non-interactive --new-version $(awk -F\" '/"version":/ {print $4}' package.json)
+
+workflows:
+  version: 2.1
+  test-deploy:
+    jobs:
+      - test:
+          filters:
+            tags:
+              only: /^v.*/
+              
+      - deploy:
+          requires:
+            - test
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
