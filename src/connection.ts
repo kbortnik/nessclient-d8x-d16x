@@ -7,8 +7,8 @@ class Connection {
   private _retrying = false;
   private _timeout: number;
 
-  constructor(private readonly _host: string, private readonly _port: number) {
-    this._socket = new net.Socket();
+  constructor(private readonly _host: string, private readonly _port: number, socket: net.Socket | null = null) {
+    this._socket = socket ?? new net.Socket();
     this._socket.on('connect', this.connectEventHandler);
     this._socket.on('data', (data) => {
       this.dataReceivedEventDispatcher.fire(data);
@@ -47,7 +47,9 @@ class Connection {
       this._retrying = true;
     }
 
-    setTimeout(this.connectInternal, this._timeout);
+    setTimeout(() => {
+      this.connectInternal();
+    }, this._timeout);
   }
 }
 
