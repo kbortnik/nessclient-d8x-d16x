@@ -11,7 +11,6 @@ class NessClient {
 
   private readonly _connection: Connection;
   private _alarm: Alarm;
-  private _statusLoop: NodeJS.Timeout | undefined;
   private _eventReceivedEventDispatcher = new EventDispatcher<BaseEvent>();
 
   private _logger: InternalLogger;
@@ -23,6 +22,14 @@ class NessClient {
 
     this._connection = new Connection(host, port);
     this._alarm = new Alarm(true);
+  }
+
+  public onConnection(handler: Handler<void>): void {
+    this._connection.onConnection(handler);
+  }
+
+  public onConnectionError(handler: Handler<Error>): void {
+    this._connection.onConnectionError(handler);
   }
 
   public onZoneChange(handler: Handler<[number, boolean]>): void {
@@ -65,7 +72,7 @@ class NessClient {
     this.update();
 
     // Schedule the update command
-    this._statusLoop = setInterval(() => {
+    setInterval(() => {
       this.update();
     }, 60 * 1000);
   }
