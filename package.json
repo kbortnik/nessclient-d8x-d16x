@@ -20,6 +20,7 @@
     "build"
   ],
   "scripts": {
+    "prepare": "tsc",
     "tsc": "tsc",
     "test": "jest",
     "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
