@@ -1,6 +1,6 @@
 {
   "name": "nessclient",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Library for interfacing with Ness D8x and D16x alarm systems, via an RS232 network server.",
   "keywords": [
     "ness",
